@@ -62,6 +62,7 @@ const FacetListBase = ({
       <FacetAutoSuggest
         handleInputOnChange={handleInputOnChange}
         refinements={refinements}
+        index={customAttribute || attribute}
         {...props}
       />
     );

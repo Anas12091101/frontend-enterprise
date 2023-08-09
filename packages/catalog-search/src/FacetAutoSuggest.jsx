@@ -10,6 +10,7 @@ const FacetAutoSuggest = ({
   handleInputOnChange,
   isChip,
   refinements,
+  index,
 }) => {
   const [selected, setSelected] = useState(title);
   const handleChange = (item) => {
@@ -42,7 +43,12 @@ const FacetAutoSuggest = ({
         }}
       >
         {items.map((item) => (
-          <FormAutosuggestOption onClick={() => handleChange(item)}>
+          <FormAutosuggestOption
+            className={
+              refinements[index]?.includes(item.label) && "font-weight-bold"
+            }
+            onClick={() => handleChange(item)}
+          >
             {item.label}
           </FormAutosuggestOption>
         ))}
