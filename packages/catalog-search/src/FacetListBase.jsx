@@ -1,11 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 
-import { NO_OPTIONS_FOUND, STYLE_VARIANTS } from "./data/constants";
-import FacetDropdown from "./FacetDropdown";
-import TypeaheadFacetDropdown from "./TypeaheadFacetDropdown";
-import FacetItem from "./FacetItem";
 import { SearchContext } from "./SearchContext";
 import {
   addToRefinementArray,
@@ -14,24 +10,15 @@ import {
   removeFromRefinementArray,
 } from "./data/actions";
 import FacetAutoSuggest from "./FacetAutoSuggest";
+import FacetDropdownBase from "./FacetDropdownBase";
 
 const FacetListBase = ({
   attribute,
   facetValueType,
-  isBold,
-  isCheckedField,
-  items,
-  title,
-  label,
-  typeaheadOptions,
-  searchForItems,
-  variant,
   noDisplay,
-  doRefinement,
   customAttribute,
-  showBadge,
   isStyleAutoSuggest,
-  isChip,
+  ...props
 }) => {
   const { refinements, dispatch } = useContext(SearchContext);
 
@@ -66,32 +53,6 @@ const FacetListBase = ({
     }
   };
 
-  const renderItems = useCallback(() => {
-    if (!items?.length) {
-      return <span className="p-2 d-block">{NO_OPTIONS_FOUND}</span>;
-    }
-
-    return items.map((item) => {
-      let isChecked;
-      if (doRefinement) {
-        isChecked = isCheckedField ? item[isCheckedField] : !!item.value;
-      } else {
-        const index = customAttribute || attribute;
-        isChecked = refinements[index]?.includes(item.label);
-      }
-      return (
-        <FacetItem
-          key={item.label}
-          handleInputOnChange={handleInputOnChange}
-          item={item}
-          isChecked={isChecked}
-          variant={variant}
-          showBadge={showBadge}
-        />
-      );
-    });
-  }, [items]);
-
   if (noDisplay) {
     return null;
   }
@@ -99,70 +60,33 @@ const FacetListBase = ({
   if (isStyleAutoSuggest) {
     return (
       <FacetAutoSuggest
-        title={title}
-        label={label}
-        items={items}
         handleInputOnChange={handleInputOnChange}
-        variant={variant}
-        renderItems={renderItems}
-        isChip={isChip}
         refinements={refinements}
-      />
-    );
-  }
-
-  if (typeaheadOptions) {
-    return (
-      <TypeaheadFacetDropdown
-        items={renderItems()}
-        title={title}
-        isBold={isBold}
-        options={typeaheadOptions}
-        searchForItems={searchForItems}
-        variant={variant}
+        {...props}
       />
     );
   }
 
   return (
-    <FacetDropdown
-      items={renderItems()}
-      title={title}
-      isBold={isBold}
-      variant={variant}
+    <FacetDropdownBase
+      attribute={attribute}
+      customAttribute={customAttribute}
+      handleInputOnChange={handleInputOnChange}
+      {...props}
     />
   );
 };
 
 FacetListBase.defaultProps = {
-  isCheckedField: null,
-  typeaheadOptions: null,
   customAttribute: null,
-  searchForItems: null,
-  variant: STYLE_VARIANTS.inverse,
-  noDisplay: false,
-  doRefinement: true,
-  showBadge: true,
 };
 
 FacetListBase.propTypes = {
   attribute: PropTypes.string.isRequired,
   facetValueType: PropTypes.oneOf(["array", "bool", "single-item"]).isRequired,
-  isBold: PropTypes.bool.isRequired,
-  isCheckedField: PropTypes.string,
   customAttribute: PropTypes.string,
-  items: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  title: PropTypes.string.isRequired,
-  typeaheadOptions: PropTypes.shape({
-    placeholder: PropTypes.string.isRequired,
-    ariaLabel: PropTypes.string.isRequired,
-    minLength: PropTypes.number.isRequired,
-  }),
-  searchForItems: PropTypes.func,
-  variant: PropTypes.oneOf([STYLE_VARIANTS.default, STYLE_VARIANTS.inverse]),
   noDisplay: PropTypes.bool,
-  doRefinement: PropTypes.bool,
-  showBadge: PropTypes.bool,
+  isStyleAutoSuggest: PropTypes.bool,
 };
 
 export default FacetListBase;
