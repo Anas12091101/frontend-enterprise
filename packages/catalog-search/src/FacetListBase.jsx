@@ -1,15 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useContext } from "react";
+import PropTypes from "prop-types";
 
-import { NO_OPTIONS_FOUND, STYLE_VARIANTS } from './data/constants';
-import FacetDropdown from './FacetDropdown';
-import TypeaheadFacetDropdown from './TypeaheadFacetDropdown';
-import FacetItem from './FacetItem';
-import { SearchContext } from './SearchContext';
+import { NO_OPTIONS_FOUND, STYLE_VARIANTS } from "./data/constants";
+import FacetDropdown from "./FacetDropdown";
+import TypeaheadFacetDropdown from "./TypeaheadFacetDropdown";
+import FacetItem from "./FacetItem";
+import { SearchContext } from "./SearchContext";
 import {
-  addToRefinementArray, setRefinementAction, deleteRefinementAction, removeFromRefinementArray,
-} from './data/actions';
+  addToRefinementArray,
+  setRefinementAction,
+  deleteRefinementAction,
+  removeFromRefinementArray,
+} from "./data/actions";
+import FacetAutoSuggest from "./FacetAutoSuggest";
 
 const FacetListBase = ({
   attribute,
@@ -18,6 +22,7 @@ const FacetListBase = ({
   isCheckedField,
   items,
   title,
+  label,
   typeaheadOptions,
   searchForItems,
   variant,
@@ -25,6 +30,8 @@ const FacetListBase = ({
   doRefinement,
   customAttribute,
   showBadge,
+  isStyleAutoSuggest,
+  isChip,
 }) => {
   const { refinements, dispatch } = useContext(SearchContext);
 
@@ -37,7 +44,7 @@ const FacetListBase = ({
     // if it is desired to load the same attribute data in multiple dropdowns then
     // customAttribute can be passed to differentiate them.
     const index = customAttribute || attribute;
-    if (item.value && facetValueType === 'array') {
+    if (item.value && facetValueType === "array") {
       if (item.value.length > 0) {
         if (refinements[index]?.includes(item.label)) {
           dispatch(removeFromRefinementArray(index, item.label));
@@ -47,10 +54,10 @@ const FacetListBase = ({
       } else {
         dispatch(deleteRefinementAction(index));
       }
-    } else if (facetValueType === 'bool') {
+    } else if (facetValueType === "bool") {
       // eslint-disable-next-line no-bitwise
       dispatch(setRefinementAction(index, refinements[index] ^ 1));
-    } else if (facetValueType === 'single-item') {
+    } else if (facetValueType === "single-item") {
       if (refinements[index]?.includes(item.label)) {
         dispatch(deleteRefinementAction(index, item.label));
       } else {
@@ -59,37 +66,49 @@ const FacetListBase = ({
     }
   };
 
-  const renderItems = useCallback(
-    () => {
-      if (!items?.length) {
-        return <span className="p-2 d-block">{NO_OPTIONS_FOUND}</span>;
-      }
+  const renderItems = useCallback(() => {
+    if (!items?.length) {
+      return <span className="p-2 d-block">{NO_OPTIONS_FOUND}</span>;
+    }
 
-      return items.map((item) => {
-        let isChecked;
-        if (doRefinement) {
-          isChecked = isCheckedField ? item[isCheckedField] : !!item.value;
-        } else {
-          const index = customAttribute || attribute;
-          isChecked = refinements[index]?.includes(item.label);
-        }
-        return (
-          <FacetItem
-            key={item.label}
-            handleInputOnChange={handleInputOnChange}
-            item={item}
-            isChecked={isChecked}
-            variant={variant}
-            showBadge={showBadge}
-          />
-        );
-      });
-    },
-    [items],
-  );
+    return items.map((item) => {
+      let isChecked;
+      if (doRefinement) {
+        isChecked = isCheckedField ? item[isCheckedField] : !!item.value;
+      } else {
+        const index = customAttribute || attribute;
+        isChecked = refinements[index]?.includes(item.label);
+      }
+      return (
+        <FacetItem
+          key={item.label}
+          handleInputOnChange={handleInputOnChange}
+          item={item}
+          isChecked={isChecked}
+          variant={variant}
+          showBadge={showBadge}
+        />
+      );
+    });
+  }, [items]);
 
   if (noDisplay) {
     return null;
+  }
+
+  if (isStyleAutoSuggest) {
+    return (
+      <FacetAutoSuggest
+        title={title}
+        label={label}
+        items={items}
+        handleInputOnChange={handleInputOnChange}
+        variant={variant}
+        renderItems={renderItems}
+        isChip={isChip}
+        refinements={refinements}
+      />
+    );
   }
 
   if (typeaheadOptions) {
@@ -128,7 +147,7 @@ FacetListBase.defaultProps = {
 
 FacetListBase.propTypes = {
   attribute: PropTypes.string.isRequired,
-  facetValueType: PropTypes.oneOf(['array', 'bool', 'single-item']).isRequired,
+  facetValueType: PropTypes.oneOf(["array", "bool", "single-item"]).isRequired,
   isBold: PropTypes.bool.isRequired,
   isCheckedField: PropTypes.string,
   customAttribute: PropTypes.string,
