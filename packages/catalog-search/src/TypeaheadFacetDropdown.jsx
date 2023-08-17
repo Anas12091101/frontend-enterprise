@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import debounce from 'lodash.debounce';
-import { Input } from '@edx/paragon';
+import React from "react";
+import PropTypes from "prop-types";
+import debounce from "lodash.debounce";
+import { Input } from "@edx/paragon";
 
-import FacetDropdown from './FacetDropdown';
+import FacetDropdown from "./FacetDropdown";
 
 const TypeaheadFacetDropdown = ({
   title,
@@ -27,7 +27,7 @@ const TypeaheadFacetDropdown = ({
           autoFocus
           type="search"
           className="typeahead-dropdown-input"
-          onChange={event => handleSearch(event.currentTarget.value)}
+          onChange={(event) => handleSearch(event.currentTarget.value)}
           placeholder={options.placeholder}
           aria-label={options.ariaLabel}
         />
@@ -51,7 +51,10 @@ const TypeaheadFacetDropdown = ({
 
 TypeaheadFacetDropdown.propTypes = {
   title: PropTypes.string.isRequired,
-  items: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  items: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
   isBold: PropTypes.bool.isRequired,
   options: PropTypes.shape({
     placeholder: PropTypes.string.isRequired,

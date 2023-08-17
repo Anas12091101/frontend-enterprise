@@ -12,18 +12,18 @@ const FacetAutoSuggest = ({
   refinements,
   index,
 }) => {
-  const [selected, setSelected] = useState(title);
+  const [optionSelected, setOptionSelected] = useState(title);
   const handleChange = (item) => {
     handleInputOnChange(item);
-    if (item.label === selected) {
-      setSelected("Please select a value");
+    if (item.label === optionSelected) {
+      setOptionSelected("Please select a value");
     }
   };
   return (
     <>
       {isChip &&
-        refinements.name?.length > 0 &&
-        refinements.name.map((name) => (
+        refinements[index]?.length > 0 &&
+        refinements[index].map((name) => (
           <Chip
             iconAfter={Close}
             onIconAfterClick={() =>
@@ -34,12 +34,13 @@ const FacetAutoSuggest = ({
           </Chip>
         ))}
       <FormAutosuggest
+        className="form-auto-suggest"
         floatingLabel={label}
         aria-label="form autosuggest"
         errorMessageText="Error, no selected value"
-        value={selected}
+        value={optionSelected}
         onSelected={(value) => {
-          setSelected(value);
+          setOptionSelected(value);
         }}
       >
         {items.map((item) => (
@@ -71,6 +72,7 @@ FacetAutoSuggest.propTypes = {
     current_jobs: PropTypes.array,
     industry_names: PropTypes.array,
   }),
+  index: PropTypes.string,
 };
 
 export default FacetAutoSuggest;

@@ -4,6 +4,7 @@ import FacetDropdown from "./FacetDropdown";
 import { NO_OPTIONS_FOUND, STYLE_VARIANTS } from "./data/constants";
 import { useCallback } from "react";
 import PropTypes from "prop-types";
+import FacetSearchField from "./FacetSearchField";
 
 const FacetDropdownBase = ({
   title,
@@ -19,12 +20,13 @@ const FacetDropdownBase = ({
   searchForItems,
   isBold,
   isCheckedField,
+  isStyleSearchBox,
+  isChip,
 }) => {
   const renderItems = useCallback(() => {
     if (!items?.length) {
       return <span className="p-2 d-block">{NO_OPTIONS_FOUND}</span>;
     }
-
     return items.map((item) => {
       let isChecked;
       if (doRefinement) {
@@ -45,6 +47,21 @@ const FacetDropdownBase = ({
       );
     });
   }, [items]);
+
+  if (isStyleSearchBox) {
+    return (
+      <FacetSearchField
+        items={renderItems()}
+        searchForItems={searchForItems}
+        typeaheadOptions={typeaheadOptions}
+        refinements={refinements}
+        index={customAttribute || attribute}
+        title={title}
+        isChip={isChip}
+        handleInputOnChange={handleInputOnChange}
+      />
+    );
+  }
 
   if (typeaheadOptions) {
     return (
@@ -96,5 +113,7 @@ FacetDropdownBase.propTypes = {
   doRefinement: PropTypes.bool,
   showBadge: PropTypes.bool,
   handleInputOnChange: PropTypes.func.isRequired,
+  isStyleSearchBox: PropTypes.bool,
+  isChip: PropTypes.bool,
 };
 export default FacetDropdownBase;

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 import PropTypes from "prop-types";
 
 import { SearchContext } from "./SearchContext";
@@ -21,7 +21,6 @@ const FacetListBase = ({
   ...props
 }) => {
   const { refinements, dispatch } = useContext(SearchContext);
-
   /**
    * Handles when a facet option is toggled by either adding it to the refinements
    * reducer for the facet attribute, or removes the facet attribute if there is no
@@ -53,10 +52,6 @@ const FacetListBase = ({
     }
   };
 
-  if (noDisplay) {
-    return null;
-  }
-
   if (isStyleAutoSuggest) {
     return (
       <FacetAutoSuggest
@@ -73,6 +68,7 @@ const FacetListBase = ({
       attribute={attribute}
       customAttribute={customAttribute}
       handleInputOnChange={handleInputOnChange}
+      refinements={refinements}
       {...props}
     />
   );

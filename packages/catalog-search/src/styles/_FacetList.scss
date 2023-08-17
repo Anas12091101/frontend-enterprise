@@ -34,13 +34,17 @@ $facet-dropdown-max-height: 250px;
     .dropdown-menu {
       max-height: unset;
       overflow-y: unset;
-          .typeahead-dropdown-menu-scrollable-items {
+      .typeahead-dropdown-menu-scrollable-items {
         max-height: $facet-dropdown-max-height;
         overflow-y: scroll;
       }
     }
   }
-
+}
+.form-auto-suggest {
+  .has-value.form-control {
+    color: $gray-500;
+  }
 }
 
 .bg-brand-primary--default {

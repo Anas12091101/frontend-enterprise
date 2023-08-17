@@ -1,0 +1,11 @@
+.facet-search-list {
+  max-height: $facet-dropdown-max-height;
+  overflow-y: scroll;
+  background-color: $light-100;
+}
+
+.pgn__searchfield {
+  .form-control {
+    color: $gray-500;
+  }
+}
